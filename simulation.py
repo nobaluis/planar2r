@@ -4,10 +4,12 @@ import numpy as np
 from planar_2r import Planar2R
 
 
-def path_planning(u, a1=1.0, a2=1.0):
+def path_planning(u, w=1.0, h=1.0, asymmetric=True):
     """Computes the parametric lemniscate of Bernoulli"""
-    x = (a1 * np.cos(u)) / (1.0 + np.sin(u) ** 2)
-    y = (a2 * np.sin(u) * np.cos(u)) / (1.0 + np.sin(u) ** 2)
+    x = (w * np.cos(u)) / (1.0 + np.sin(u) ** 2)
+    y = (h * np.sin(u) * np.cos(u)) / (1.0 + np.sin(u) ** 2)
+    if asymmetric and x < 0.0:
+        x *= 0.5
     return x, y
 
 
@@ -22,19 +24,18 @@ def plot_2d(x, fx_1, fx_2, x_label, fx1_label, fx2_label):
 
 
 if __name__ == '__main__':
-    L = np.array([1.0, 0.5])  # links length
-    m = np.array([0.5, 0.3])  # links mass
+    L = np.array([0.5, 0.5])  # links length
+    m = np.array([0.5, 0.25])  # links mass
 
-    theta = np.array([np.pi / 2.0, 0.0])  # initial position
+    theta = np.array([0.0, 0.0])  # initial position
     dot_theta = np.array([0.0, 0.0])  # initial vel
-    tau = np.array([0.3, 0.1])  # control signal
 
     robot = Planar2R(L, m, g=0.0)  # planar 2R robot
-    t = np.linspace(0, 10, 100)  # time steps
+    t = np.linspace(0, 100, 1000)  # time steps
     dt = t[1] - t[0]  # step size
 
-    k_p = 0.5 * np.eye(2)  # proportional
-    k_d = 0.1 * np.eye(2)  # derivative
+    k_p = 0.2 * np.eye(2)  # proportional
+    k_d = 0.3 * np.eye(2)  # derivative
     theta_e = np.array([0.0, 0.0])  # pos error
     dot_theta_e = np.array([0.0, 0.0])  # vel error
 
@@ -49,7 +50,7 @@ if __name__ == '__main__':
         state[i][1, :] = dot_theta
 
         # desired position
-        x_d, y_d = path_planning(i / t[-1])
+        x_d, y_d = path_planning(i / t[-1], asymmetric=True)
         theta_d = robot.inverse_kinematics(x_d, y_d)
 
         # pd controller
@@ -75,6 +76,7 @@ if __name__ == '__main__':
         errors[i][0, :] = dot_theta_e
 
     # plot sim results (position)
+    plt.style.use('bmh')
     fig_1 = plot_2d(
         t, state[:, 0, 0], state[:, 0, 1],
         't', '\\theta_1', '\\theta_2')
@@ -82,23 +84,24 @@ if __name__ == '__main__':
     fig_1.show()
 
     # plot sim results (velocity)
-    fig_2 = plot_2d(
+    fig2 = plot_2d(
         t, state[:, 1, 0], state[:, 1, 1],
         't', '\\dot{\\theta}_1', '\\dot{\\theta}_2')
-    fig_2.suptitle('Velocity')
-    fig_2.show()
+    fig2.suptitle('Velocity')
+    fig2.show()
 
     # plot sim results (errors)
-    fig_3 = plot_2d(
+    fig3 = plot_2d(
         t, errors[:, 0, 0], errors[:, 0, 1],
         't', '\\theta_{e1}', '\\theta_{e2}')
-    fig_3.suptitle('Position Error')
-    fig_3.show()
+    fig3.suptitle('Position Error')
+    fig3.show()
 
     # plot path
-    plt.plot(path[:, 0, 0], path[:, 0, 1], 'C1', label='pos_d')
-    plt.plot(path[:, 1, 0], path[:, 1, 1], 'C2', label='pos_r')
-    plt.axis('equal')
-    plt.title('Path planning vs. real path')
-    plt.legend(['desired pos', 'real pos'])
-    plt.show()
+    fig4, ax4 = plt.subplots()
+    ax4.plot(path[:, 0, 0], path[:, 0, 1], 'C0', label='desired pos')
+    ax4.plot(path[:, 1, 0], path[:, 1, 1], '*C4', label='real pos')
+    ax4.axis('equal')
+    ax4.legend()
+    ax4.set_title('Path planning vs. real path')
+    fig4.show()
