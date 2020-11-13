@@ -24,7 +24,7 @@ def iae (error):
     return iae
     
 def itae (error):
-    """Compute the iae metric"""
+    """Compute the itae metric"""
     itae = np.sum(np.abs(error))
     return itae
     
