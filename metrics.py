@@ -23,6 +23,10 @@ def iae (error):
     iae = np.sum(np.abs(error))
     return iae
     
+def itae (error):
+    """Compute the iae metric"""
+    itae = np.sum(np.abs(error))
+    return itae
     
     
     

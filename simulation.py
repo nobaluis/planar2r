@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from metrics import mse, ise, iae
+from metrics import mse, ise, iae, itae
 
 from planar_2r import Planar2R
 
@@ -108,6 +108,14 @@ if __name__ == '__main__':
     #IAE - Velocity
     iae_dot_theta1 = iae(errors[:, 1, 0])
     iae_dot_theta2 = iae(errors[:, 1, 1])
+    
+    #ITAE - Position
+    itae_theta1 = itae(t @ errors[:, 0, 0])
+    itae_theta2 = itae(t @ errors[:, 0, 1])
+    
+    #ITAE - Velocity
+    itae_dot_theta1 = itae(t @ errors[:, 1, 0])
+    itae_dot_theta2 = itae(t @ errors[:, 1, 1])
     
     #TVU - Control Total Variation
     TVU = np.array(TVU)
