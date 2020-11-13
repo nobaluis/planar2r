@@ -39,7 +39,7 @@ if __name__ == '__main__':
     dot_theta_e = np.array([0.0, 0.0])  # vel error
 
     state = np.empty((len(t), 2, len(theta)))  # state values
-    errors = np.empty((len(t), len(theta)))  # error values
+    errors = np.empty((len(t), 2, len(theta)))  # error values
     path = np.empty((len(t), 2, 2))
 
     # simulation with Euler integration
@@ -62,13 +62,17 @@ if __name__ == '__main__':
         theta = theta + dot_theta * dt
         dot_theta = dot_theta + dot2_theta * dt
 
+        # compute error
+        theta_e = theta_d - theta
+        dot_theta_e = -dot_theta
+
         # save paths
         path[i][0, :] = np.array([x_d, y_d])
         path[i][1, :] = robot.forward_kinematics(theta)
 
-        # compute error
-        theta_e = theta_d - theta
-        dot_theta_e = -dot_theta
+        # save errors
+        errors[i][0, :] = theta_e
+        errors[i][0, :] = dot_theta_e
 
     # plot sim results (position)
     fig_1 = plot_2d(
@@ -86,13 +90,15 @@ if __name__ == '__main__':
 
     # plot sim results (errors)
     fig_3 = plot_2d(
-        t, errors[:, 0], errors[:, 1],
+        t, errors[:, 0, 0], errors[:, 0, 1],
         't', '\\theta_{e1}', '\\theta_{e2}')
-    fig_3.suptitle('Error')
+    fig_3.suptitle('Position Error')
     fig_3.show()
 
     # plot path
     plt.plot(path[:, 0, 0], path[:, 0, 1], 'C1', label='pos_d')
     plt.plot(path[:, 1, 0], path[:, 1, 1], 'C2', label='pos_r')
     plt.axis('equal')
+    plt.title('Path planning vs. real path')
+    plt.legend(['desired pos', 'real pos'])
     plt.show()
