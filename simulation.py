@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from metrics import mse, ise, iae
 
 from planar_2r import Planar2R
 
@@ -85,28 +86,28 @@ if __name__ == '__main__':
         errors[i][1, :] = dot_theta_e
     
     #MSE - Position
-    mse_theta1 = np.square(errors[:, 0, 0]).mean()
-    mse_theta2 = np.square(errors[:, 0, 1]).mean()
+    mse_theta1 = mse(errors[:, 0, 0])
+    mse_theta2 = mse(errors[:, 0, 1])
     
     #MSE - Velocity
-    mse_dot_theta1 = np.square(errors[:, 1, 0]).mean()
-    mse_dot_theta2 = np.square(errors[:, 1, 1]).mean()
+    mse_dot_theta1 = mse(errors[:, 1, 0])
+    mse_dot_theta2 = mse(errors[:, 1, 1])
     
     #ISE - Position
-    ise_theta1 = np.sum(np.square(errors[:, 0, 0]))
-    ise_theta2 = np.sum(np.square(errors[:, 0, 1]))
+    ise_theta1 = ise(errors[:, 0, 0])
+    ise_theta2 = ise(errors[:, 0, 1])
     
     #ISE - Velocity
-    ise_dot_theta1 = np.sum(np.square(errors[:, 1, 0]))
-    ise_dot_theta2 = np.sum(np.square(errors[:, 1, 1]))
+    ise_dot_theta1 = ise(errors[:, 1, 0])
+    ise_dot_theta2 = ise(errors[:, 1, 1])
     
     #IAE - Position
-    iae_theta1 = np.sum(np.abs(errors[:, 0, 0]))
-    iae_theta2 = np.sum(np.abs(errors[:, 0, 1]))
+    iae_theta1 = iae(errors[:, 0, 0])
+    iae_theta2 = iae(errors[:, 0, 1])
     
     #IAE - Velocity
-    iae_dot_theta1 = np.sum(np.abs(errors[:, 1, 0]))
-    iae_dot_theta2 = np.sum(np.abs(errors[:, 1, 1]))
+    iae_dot_theta1 = iae(errors[:, 1, 0])
+    iae_dot_theta2 = iae(errors[:, 1, 1])
     
     #TVU - Control Total Variation
     TVU = np.array(TVU)
