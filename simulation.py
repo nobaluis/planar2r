@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from metrics import mse, ise, iae, itae
+from metrics import mse, ise, iae, itae, itse
 
 from planar_2r import Planar2R
 
@@ -110,12 +110,20 @@ if __name__ == '__main__':
     iae_dot_theta2 = iae(errors[:, 1, 1])
     
     #ITAE - Position
-    itae_theta1 = itae(t @ errors[:, 0, 0])
-    itae_theta2 = itae(t @ errors[:, 0, 1])
+    itae_theta1 = itae(t, errors[:, 0, 0])
+    itae_theta2 = itae(t, errors[:, 0, 1])
     
     #ITAE - Velocity
-    itae_dot_theta1 = itae(t @ errors[:, 1, 0])
-    itae_dot_theta2 = itae(t @ errors[:, 1, 1])
+    itae_dot_theta1 = itae(t, errors[:, 1, 0])
+    itae_dot_theta2 = itae(t, errors[:, 1, 1])
+    
+    #ITSE - Position
+    itse_theta1 = itse(t, errors[:, 0, 0])
+    itse_theta2 = itse(t, errors[:, 0, 1])
+    
+    #ITSE - Velocity
+    itse_dot_theta1 = itse(t, errors[:, 1, 0])
+    itse_dot_theta2 = itse(t, errors[:, 1, 1])
     
     #TVU - Control Total Variation
     TVU = np.array(TVU)
@@ -128,6 +136,8 @@ if __name__ == '__main__':
     fig_1 = plot_2d(
         t, state[:, 0, 0], state[:, 0, 1],
         't', '\\theta_1', '\\theta_2')
+    
+    
     fig_1.suptitle('Position')
     fig_1.show()
 

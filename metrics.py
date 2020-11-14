@@ -23,9 +23,14 @@ def iae (error):
     iae = np.sum(np.abs(error))
     return iae
     
-def itae (error):
+def itae (t, error):
     """Compute the itae metric"""
-    itae = np.sum(np.abs(error))
+    itae = np.sum(t @ np.abs(error))
+    return itae
+
+def itse (t, error):
+    """Compute the itse metric"""
+    itae = np.sum(t @ np.square(error))
     return itae
     
     
